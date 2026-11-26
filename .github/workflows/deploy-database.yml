@@ -1,0 +1,75 @@
+﻿name: Build & Deploy SQL DACPAC (DEV -> UAT -> PROD -> COB)
+
+on:
+  push:
+    branches: [ master1, main1 ]
+
+jobs:
+  build-dacpac:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+      - name: Build SQL Project (.dacpac)
+        run: msbuild EmployeeDatabase/EmployeeDatabase.csproj /p:Configuration=Release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dacpac-artifact
+          path: EmployeeDatabase/bin/Release/EmployeeDatabase.dacpac
+
+  deploy-dev-db:
+    needs: build-dacpac
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dacpac-artifact
+      - name: Deploy DACPAC to EmployeeDb_Dev
+        uses: azure/sql-action@v2
+        with:
+          connection-string: ${{ secrets.SQL_CONN_DEV }}
+          path: ./EmployeeDatabase.dacpac
+
+  deploy-uat-db:
+    needs: [build-dacpac, deploy-dev-db]
+    runs-on: ubuntu-latest
+    environment: uat
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dacpac-artifact
+      - name: Deploy DACPAC to EmployeeDb_Uat
+        uses: azure/sql-action@v2
+        with:
+          connection-string: ${{ secrets.SQL_CONN_UAT }}
+          path: ./EmployeeDatabase.dacpac
+
+  deploy-prod-db:
+    needs: [build-dacpac, deploy-uat-db]
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dacpac-artifact
+      - name: Deploy DACPAC to EmployeeDb_Prod
+        uses: azure/sql-action@v2
+        with:
+          connection-string: ${{ secrets.SQL_CONN_PROD }}
+          path: ./EmployeeDatabase.dacpac
+
+  deploy-cob-db:
+    needs: [build-dacpac, deploy-prod-db]
+    runs-on: ubuntu-latest
+    environment: cob
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dacpac-artifact
+      - name: Deploy DACPAC to EmployeeDb_Cob
+        uses: azure/sql-action@v2
+        with:
+          connection-string: ${{ secrets.SQL_CONN_COB }}
+          path: ./EmployeeDatabase.dacpac

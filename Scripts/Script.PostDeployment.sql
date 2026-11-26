@@ -1,0 +1,5 @@
+﻿--IF NOT EXISTS (SELECT 1 FROM [dbo].[EmployeeDetails] WHERE [Name] = 'System Admin (Seeded)')
+--BEGIN
+--    INSERT INTO [dbo].[EmployeeDetails] ([Name], [Department])
+--    VALUES ('System Admin (Seeded)', 'IT Operations');
+--END
