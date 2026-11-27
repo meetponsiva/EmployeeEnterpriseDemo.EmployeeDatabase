@@ -12,7 +12,7 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - name: Build SQL Project (.dacpac)
-        run: msbuild EmployeeDatabase/EmployeeDatabase.csproj /p:Configuration=Release
+        run: msbuild EmployeeDatabase/EmployeeDatabase.sqlproj /p:Configuration=Release
       - uses: actions/upload-artifact@v4
         with:
           name: dacpac-artifact
