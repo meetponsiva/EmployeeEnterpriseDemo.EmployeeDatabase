@@ -2,7 +2,7 @@
 
 on:
   push:
-    branches: [ master1, main1 ]
+    branches: [ master, main ]
 
 jobs:
   build-dacpac:
