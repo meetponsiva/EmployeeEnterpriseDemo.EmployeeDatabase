@@ -20,7 +20,7 @@ jobs:
 
   deploy-dev-db:
     needs: build-dacpac
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment: dev
     steps:
       - uses: actions/download-artifact@v4
@@ -35,7 +35,7 @@ jobs:
 
   deploy-uat-db:
     needs: [build-dacpac, deploy-dev-db]
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment: uat
     steps:
       - uses: actions/download-artifact@v4
@@ -50,7 +50,7 @@ jobs:
 
   deploy-prod-db:
     needs: [build-dacpac, deploy-uat-db]
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment: prod
     steps:
       - uses: actions/download-artifact@v4
@@ -65,7 +65,7 @@ jobs:
 
   deploy-cob-db:
     needs: [build-dacpac, deploy-prod-db]
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment: cob
     steps:
       - uses: actions/download-artifact@v4
