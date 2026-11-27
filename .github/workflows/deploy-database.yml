@@ -32,6 +32,7 @@ jobs:
           connection-string: ${{ secrets.SQL_CONN_DEV }}
           path: ./EmployeeDatabase.dacpac
           action: 'publish'
+          arguments: '/v:EnvironmentName=DEV'
 
   deploy-uat-db:
     needs: [build-dacpac, deploy-dev-db]
@@ -47,6 +48,7 @@ jobs:
           connection-string: ${{ secrets.SQL_CONN_UAT }}
           path: ./EmployeeDatabase.dacpac
           action: 'publish'
+          arguments: '/v:EnvironmentName=UAT'
 
   deploy-prod-db:
     needs: [build-dacpac, deploy-uat-db]
@@ -62,6 +64,7 @@ jobs:
           connection-string: ${{ secrets.SQL_CONN_PROD }}
           path: ./EmployeeDatabase.dacpac
           action: 'publish'
+          arguments: '/v:EnvironmentName=PROD'
 
   deploy-cob-db:
     needs: [build-dacpac, deploy-prod-db]
@@ -77,3 +80,4 @@ jobs:
           connection-string: ${{ secrets.SQL_CONN_COB }}
           path: ./EmployeeDatabase.dacpac
           action: 'publish'
+          arguments: '/v:EnvironmentName=COB'
